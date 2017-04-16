@@ -6,8 +6,8 @@ use std::fs::File;
 fn main() {
 
     // read the training corpus from a file
-    let training_filename = env::args().nth(1).expect("usage: cargo run <training_file>");
-    let mut file = File::open(training_filename).expect("could not read file");
+    let training_filename = env::args().nth(1).expect("Usage: cargo run <training_file>");
+    let mut file = File::open(training_filename).expect("Could not read file");
     let training_words = read_words(file);
 
     // TODO: pass words into our model for training
@@ -19,6 +19,7 @@ fn main() {
         let mut input = String::new();
         // TODO: pass the word into trained model and correct if necessary
         stdin().read_line(&mut input).expect("Could not read line!");
+
     }
 
 }
