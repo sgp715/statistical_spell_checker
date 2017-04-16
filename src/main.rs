@@ -6,22 +6,20 @@ use std::fs::File;
 fn main() {
 
     // read the training corpus from a file
-    let training_filename = env::args().nth(1).expect("No file specified silly!");
-    let training_words = read_words_file(training_filename);
+    let training_filename = env::args().nth(1).expect("usage: cargo run <training_file>");
+    let mut file = File::open(training_filename).expect("could not read file");
+    let training_words = read_words(file);
 
-    // read user input from stdin
-    let input_words = read_words(stdin());
+    // TODO: pass words into our model for training
+    println!("Model trained!");
 
-}
+    println!("Enter words to be corrected (ctrl+C to quit):");
+    loop {
 
-
-fn read_words_file(filename: String) -> String {
-
-    let mut file = File::open(filename).expect("Could not find file...");
-    let mut words = String::new();
-    file.read_to_string(&mut words);
-
-    words
+        let mut input = String::new();
+        // TODO: pass the word into trained model and correct if necessary
+        stdin().read_line(&mut input).expect("Could not read line!");
+    }
 
 }
 
