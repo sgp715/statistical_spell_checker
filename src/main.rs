@@ -10,7 +10,7 @@ fn main() {
     let training_words = read_words_file(training_filename);
 
     // read user input from stdin
-    let input_words = read_words(stdin()); // read from stdin
+    let input_words = read_words(stdin());
 
 }
 
