@@ -85,9 +85,10 @@ mod read_words_tests {
 fn word_probability(possible_words: &Vec<String>,
                 trained_words: &Vec<(String, usize)>) -> String {
     //! Given a vector of possible words, return the word that has the highest
-    //! probability based on the training set
+    //! probability based on the training set. Return "-" if no possible words
+    //! are found in the training set.
 
-    let mut best_str = String::from("-");
+    let mut best_word = String::from("-");
     let mut max = 0;
 
     'possible: for p_word in possible_words {
@@ -96,13 +97,13 @@ fn word_probability(possible_words: &Vec<String>,
 
             if *p_word == *word && max < freq {
                 max = freq;
-                best_str = p_word.to_owned();
+                best_word = p_word.to_owned();
                 break 'trained;
             }
         }
     }
 
-    best_str
+    best_word
 }
 
 #[cfg(test)]
