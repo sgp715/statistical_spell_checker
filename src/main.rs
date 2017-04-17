@@ -1,6 +1,7 @@
 use std::env;
 use std::io::{BufRead, BufReader, Read, stdin};
 use std::fs::File;
+use std::collections::HashMap;
 
 
 fn main() {
@@ -12,7 +13,6 @@ fn main() {
 
     // TODO: pass words into our model for training
     println!("Model trained!");
-
     println!("Enter words to be corrected (ctrl+C to quit):");
     loop {
 
@@ -25,25 +25,30 @@ fn main() {
 }
 
 
-fn read_words<R: Read>(reader: R) -> Vec<String> {
-    //! reads words from stdin and out puts a vector containing the words
+fn read_words<R: Read>(reader: R) -> Vec<(String, usize)> {
+    //! reads words from stdin and outputs a vector tuple containing the words
+    //! and their frequencies (sorted by frequency)
     //! delimited by spaces
 
-    let mut words: Vec<String> = vec![];
-
     let mut lines = BufReader::new(reader).lines();
+    let mut words = HashMap::new();
 
     while let Some(Ok(line)) = lines.next() {
 
-        let mut split_line = line.split(" ");
+        let mut split_line = line.split_whitespace();
         for s in split_line {
-            words.push(s.to_string());
+            if words.contains_key(s) {
+                *words.get_mut(s).unwrap() += 1;
+            } else {
+                words.insert(s.to_owned(), 1);
+            }
         }
-        // words.push(line.trim().to_string());
     }
 
-    words
+    let mut sorted_words: Vec<(String, usize)> = words.into_iter().collect();
+    sorted_words.sort_by(|w1, w2| (w2.1).cmp(&(w1.1))); // Sort by frequency
 
+    sorted_words
 }
 
 #[cfg(test)]
@@ -54,10 +59,23 @@ mod read_words_tests {
 
     #[test]
     fn reads() {
-        assert_read(&["hello", "world"], "hello\nworld\n");
+        assert_read(vec![("hello".to_owned(), 1)], "hello\n");
     }
 
-    fn assert_read(expected: &[&str], input: &str) {
+    #[test]
+    fn sorts_by_freq() {
+        assert_read(vec![("hello".to_owned(), 3), ("world".to_owned(), 2)],
+            "world\nhello\nworld\nhello\nhello\n");
+    }
+
+    #[test]
+    fn splits_spaces() {
+        assert_read(vec![("hello".to_owned(), 3), ("world".to_owned(), 2)],
+            "world\thello\n\tworld   hello\t\n\nhello\n");
+    }
+
+    //fn assert_read(expected: &[&str], input: &str) {
+    fn assert_read(expected: Vec<(String, usize)>, input: &str) {
         let mock_read = Cursor::new(input);
         let words = read_words(mock_read);
         assert_eq!(expected.to_owned(), words);
