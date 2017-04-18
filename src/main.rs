@@ -95,15 +95,18 @@ mod counter_tests {
     #[test]
     fn simple() {
 
-        // let mut words: Vec<String> = vec![];
-        // words.push("hello".to_string());
-        // words.push("world".to_string());
-        // words.push("world".to_string());
-        //
-        // let expected = counter(words);
-        //
-        // assert_eq!(words.get("world".to_string()), 2);
-        // assert_eq!(words.get("hello".to_string()), 1);
+        let mut words: Vec<String> = vec![];
+        words.push("hello".to_string());
+        words.push("world".to_string());
+        words.push("world".to_string());
+
+        let expected = counter(words);
+
+        assert_eq!(expected.contains_key("world"), true);
+        assert_eq!(expected["world"], 2);
+
+        assert_eq!(expected.contains_key("hello"), true);
+        assert_eq!(expected["hello"], 1);
 
     }
 
