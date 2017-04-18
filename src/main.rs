@@ -9,7 +9,7 @@ fn main() {
     // read the training corpus from a file
     let training_filename = env::args().nth(1).expect("Usage: cargo run <training_file>");
     let file = File::open(training_filename).expect("Could not read file");
-    let training_words = read_words(file);
+    let training_words = words_count(file);
 
     // TODO: pass words into our model for training
     println!("Model trained!");
@@ -25,7 +25,7 @@ fn main() {
 }
 
 
-fn read_words<R: Read>(reader: R) -> Vec<(String, usize)> {
+fn words_count<R: Read>(reader: R) -> Vec<(String, usize)> {
     //! reads words from stdin and outputs a vector tuple containing the words
     //! and their frequencies (sorted by frequency)
     //! delimited by spaces
@@ -52,9 +52,9 @@ fn read_words<R: Read>(reader: R) -> Vec<(String, usize)> {
 }
 
 #[cfg(test)]
-mod read_words_tests {
+mod words_count_tests {
 
-    use super::read_words;
+    use super::words_count;
     use std::io::Cursor;
 
     #[test]
@@ -76,7 +76,7 @@ mod read_words_tests {
 
     fn assert_read(expected: Vec<(String, usize)>, input: &str) {
         let mock_read = Cursor::new(input);
-        let words = read_words(mock_read);
+        let words = words_count(mock_read);
         assert_eq!(expected.to_owned(), words);
     }
 
@@ -125,4 +125,5 @@ mod word_probability_tests {
                             ("jest".to_owned(), 3)];
         assert_eq!("-", word_probability(&poss, &trained));
     }
+
 }
