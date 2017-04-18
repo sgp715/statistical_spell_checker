@@ -41,6 +41,7 @@ fn read_words<R: Read>(reader: R) -> Vec<String> {
     while let Some(Ok(line)) = lines.next() {
 
         let split_line = line.split_whitespace();
+
         for s in split_line {
             words.push(s.to_string());
         }
@@ -66,14 +67,14 @@ mod read_words_tests {
 }
 
 
-fn counter(words: Vec<String>) -> HashMap<String, i64> {
+fn counter(words: &Vec<String>) -> HashMap<String, i64> {
 
     //! takes in a vector of words creates a hashmap with the frequencies
     //! of the words from the vector
 
     let mut frequencies: HashMap<String, i64> = HashMap::new();
 
-    for w in &words {
+    for w in words {
 
         // fixed this hopefully?
         let count: i64 = *frequencies.entry(w.to_string()).or_insert(0);
@@ -100,7 +101,7 @@ mod counter_tests {
         words.push("world".to_string());
         words.push("world".to_string());
 
-        let expected = counter(words);
+        let expected = counter(&words);
 
         assert_eq!(expected.contains_key("world"), true);
         assert_eq!(expected["world"], 2);
@@ -112,31 +113,58 @@ mod counter_tests {
 
 }
 
+fn splits(words: &Vec<String>) -> Vec<String> {
 
-fn correction(words: Vec<String>) -> Vec<String> {
+    let splits: Vec<String> = vec![];
 
-    let mut correction_words: Vec<String> = vec![];
-
-    correction_words
-
-}
-
-#[cfg(test)]
-mod correction_tests {
-
-}
-
-
-fn candidates(words: Vec<String>) -> Vec<String> {
-
-    let mut candidates_words: Vec<String> = vec![];
-
-    candidates_words
+    splits
 
 }
 
 #[cfg(test)]
-mod candidates_tests {
+mod test_splits {
+
+    #[test]
+    fn blank_test() {
+
+    }
+
+}
+
+
+fn edits1(words: &Vec<String>) -> Vec<String> {
+
+    let mut edits1_words: Vec<String> = vec![];
+
+    let letters = "abcdefghijklmnopqrstuvwxyz";
+
+    let mut splits = splits(&words);
+    let mut deletes: Vec<String> = vec![];
+    let mut transposes: Vec<String> = vec![];
+    let mut replaces: Vec<String> = vec![];
+    let mut inserts: Vec<String> = vec![];
+
+
+    edits1_words
+
+}
+
+#[cfg(test)]
+mod edits1_tests {
+
+}
+
+
+fn edits2(words: &Vec<String>) -> Vec<String> {
+
+    let mut edits2_words: Vec<String> = vec![];
+
+    edits2_words
+
+}
+
+#[cfg(test)]
+mod edits2_tests {
 
 }
 
@@ -155,32 +183,36 @@ mod known_tests {
 }
 
 
-fn edits1(words: Vec<String>) -> Vec<String> {
+fn candidates(words: Vec<String>) -> Vec<String> {
 
-    let mut edits1_words: Vec<String> = vec![];
+    let mut candidates_words: Vec<String> = vec![];
 
-    edits1_words
-
-}
-
-#[cfg(test)]
-mod edits1_tests {
-
-}
-
-
-fn edits2(words: Vec<String>) -> Vec<String> {
-
-    let mut edits2_words: Vec<String> = vec![];
-
-    edits2_words
+    candidates_words
 
 }
 
 #[cfg(test)]
-mod edits2_tests {
+mod candidates_tests {
 
 }
+
+
+fn correction(words: Vec<String>) -> Vec<String> {
+
+    let mut correction_words: Vec<String> = vec![];
+
+    correction_words
+
+}
+
+#[cfg(test)]
+mod correction_tests {
+
+}
+
+
+
+
 
 
 
