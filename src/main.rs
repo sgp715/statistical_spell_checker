@@ -113,7 +113,7 @@ mod counter_tests {
 
 }
 
-fn splits(words: &Vec<String>) -> Vec<String> {
+fn split(words: &str) -> Vec<String> {
 
     let splits: Vec<String> = vec![];
 
@@ -122,21 +122,41 @@ fn splits(words: &Vec<String>) -> Vec<String> {
 }
 
 #[cfg(test)]
-mod test_splits {
+mod test_split {
 
-    use super::splits;
+    use super::split;
 
     #[test]
     fn blank_test() {
 
-        let words: Vec<String> = vec![];
-        let actual = splits(&words);
+        let word = "";
+
+        let expected: Vec<String> = vec![];
+        let actual = split(word);
 
         // lengths should be equal
-        assert_eq!(actual.len(), words.len());
+        assert_eq!(actual.len(), expected.len());
 
         // the elements should be equal
-        assert_eq!(actual, words);
+        assert_eq!(actual, expected);
+
+    }
+
+    #[test]
+    fn simple() {
+
+        let word = "test";
+
+        let mut expected: Vec<String> = vec![];
+        expected.push("t".to_string());
+        expected.push("est".to_string());
+        expected.push("te".to_string());
+        expected.push("st".to_string());
+        expected.push("tes".to_string());
+        expected.push("t".to_string());
+        let actual = split(word);
+
+        assert_eq!(actual, expected);
 
     }
 
@@ -149,7 +169,12 @@ fn edits1(words: &Vec<String>) -> Vec<String> {
 
     let letters = "abcdefghijklmnopqrstuvwxyz";
 
-    let mut splits = splits(&words);
+    // gets all the splitted words
+    let mut splits: Vec<String> = vec![];
+    for w in words {
+         splits.append(&mut split(w));
+    }
+
     let mut deletes: Vec<String> = vec![];
     let mut transposes: Vec<String> = vec![];
     let mut replaces: Vec<String> = vec![];
