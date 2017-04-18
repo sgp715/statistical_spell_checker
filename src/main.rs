@@ -124,8 +124,19 @@ fn splits(words: &Vec<String>) -> Vec<String> {
 #[cfg(test)]
 mod test_splits {
 
+    use super::splits;
+
     #[test]
     fn blank_test() {
+
+        let words: Vec<String> = vec![];
+        let actual = splits(&words);
+
+        // lengths should be equal
+        assert_eq!(actual.len(), words.len());
+
+        // the elements should be equal
+        assert_eq!(actual, words);
 
     }
 
