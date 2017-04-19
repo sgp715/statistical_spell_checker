@@ -113,14 +113,13 @@ mod counter_tests {
 
 }
 
-fn split(word: &str) -> Vec<String> {
+fn split(word: &str) -> Vec<(String, String)> {
 
-    let mut splits: Vec<String> = vec![];
+    let mut splits: Vec<(String, String)> = vec![];
     let length = word.len();
 
     for i in 1..length {
-        splits.push(word[0..i].to_owned());
-        splits.push(word[i..length].to_owned());
+        splits.push((word[0..i].to_owned(), word[i..length].to_owned()));
     }
 
     splits
@@ -137,7 +136,7 @@ mod test_split {
 
         let word = "";
 
-        let expected: Vec<String> = vec![];
+        let expected: Vec<(String, String)> = vec![];
         let actual = split(word);
 
         // lengths should be equal
@@ -153,13 +152,10 @@ mod test_split {
 
         let word = "test";
 
-        let mut expected: Vec<String> = vec![];
-        expected.push("t".to_string());
-        expected.push("est".to_string());
-        expected.push("te".to_string());
-        expected.push("st".to_string());
-        expected.push("tes".to_string());
-        expected.push("t".to_string());
+        let mut expected: Vec<(String, String)> = vec![];
+        expected.push(("t".to_string(), "est".to_string()));
+        expected.push(("te".to_string(), "st".to_string()));
+        expected.push(("tes".to_string(), "t".to_string()));
         let actual = split(word);
 
         assert_eq!(actual, expected);
@@ -169,14 +165,14 @@ mod test_split {
 }
 
 
-fn edits1(words: &Vec<String>) -> Vec<String> {
+fn edits1(words: &Vec<String>) -> Vec<(String, String)> {
 
-    let mut edits1_words: Vec<String> = vec![];
+    let mut edits1_words: Vec<(String, String)> = vec![];
 
     let letters = "abcdefghijklmnopqrstuvwxyz";
 
     // gets all the splitted words
-    let mut splits: Vec<String> = vec![];
+    let mut splits: Vec<(String, String)> = vec![];
     for w in words {
          splits.append(&mut split(w));
     }
