@@ -34,8 +34,14 @@ fn main() {
     let inputs = read_words(stdin());
 
     for word in inputs {
+        // Add words that are 1 edit away
+        let mut possibilities = vec![];
+        let e1_poss = edits1(&word);
+        possibilities.append(&mut known(&e1_poss, &training_words));
 
-        let possibilities = known(&edits1(&word), &training_words);
+        // Add words that are 2 edits away
+        let e2_poss = edits2(&e1_poss);
+        possibilities.append(&mut known(&e2_poss, &training_words));
         let corrected = best_word(&possibilities, &frequencies);
 
         println!("{}, {}", word, corrected);
@@ -321,13 +327,16 @@ fn edits1(word: &str) -> Vec<String> {
     possibles
 }
 
-/*fn edits2(words: &Vec<String>) -> Vec<String> {
+fn edits2(words: &Vec<String>) -> Vec<String> {
 
-    let mut edits2_words: Vec<String> = vec![];
+    let mut possibles: Vec<String> = vec![];
 
-    edits2_words
+    for w in words {
+        possibles.append(&mut edits1(w));
+    }
 
-}*/
+    possibles
+}
 
 fn known(edits: &Vec<String>, trained_words: &Vec<String>) -> Vec<String> {
     let mut known_words: Vec<String> = vec![];
