@@ -171,7 +171,7 @@ fn delete(splits: &Vec<(String, String)>) -> Vec<String> {
 
     for &(ref L, ref R) in splits {
 
-        let mut new_word: String = L.to_string();
+        let mut new_word: String = L.to_string().clone();
         let mut first = true;
         for c in R.chars() {
 
