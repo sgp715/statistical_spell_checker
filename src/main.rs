@@ -248,9 +248,9 @@ fn edits1(words: &Vec<String>) -> Vec<(String, String)> {
          splits.append(&mut split(w));
     }
 
-    let possibles: Vec<String> = vec![];
+    let mut possibles: Vec<String> = vec![];
 
-    // possibles.append(&mut delete(&splits));
+    possibles.append(&mut delete(&splits));
     // let mut transposes: Vec<String> = vec![];
     // let mut replaces: Vec<String> = vec![];
     // let mut inserts: Vec<String> = vec![];
