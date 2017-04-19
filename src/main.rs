@@ -113,9 +113,15 @@ mod counter_tests {
 
 }
 
-fn split(words: &str) -> Vec<String> {
+fn split(word: &str) -> Vec<String> {
 
-    let splits: Vec<String> = vec![];
+    let mut splits: Vec<String> = vec![];
+    let length = word.len();
+
+    for i in 1..length {
+        splits.push(word[0..i].to_owned());
+        splits.push(word[i..length].to_owned());
+    }
 
     splits
 
