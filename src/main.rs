@@ -24,6 +24,18 @@ fn main() {
         // TODO: pass the word into trained model and correct if necessary
         stdin().read_line(&mut input).expect("Could not read line!");
 
+        /*let split_line = input.split_whitespace();
+
+        let mut corrected = String::new();
+        let mut possibilities = vec![];
+
+        for word in split_line {
+            possibilities = known(&edits1(word), &training_words);
+            corrected = best_word(possibilities, training_words)
+
+            println!("{}, {}", word, corrected);
+        }*/
+
     }
 
 }
@@ -66,17 +78,17 @@ mod read_words_tests {
 }
 
 
-fn counter(words: &Vec<String>) -> HashMap<String, i64> {
+fn counter(words: &Vec<String>) -> HashMap<String, usize> {
 
     //! takes in a vector of words creates a hashmap with the frequencies
     //! of the words from the vector
 
-    let mut frequencies: HashMap<String, i64> = HashMap::new();
+    let mut frequencies: HashMap<String, usize> = HashMap::new();
 
     for w in words {
 
         // fixed this hopefully?
-        let count: i64 = *frequencies.entry(w.to_string()).or_insert(0);
+        let count: usize = *frequencies.entry(w.to_string()).or_insert(0);
         frequencies.insert(w.to_string(), count + 1);
 
     }
@@ -237,6 +249,7 @@ mod delete_tests {
 }
 
 
+<<<<<<< HEAD
 fn replace(splits: &Vec<(String, String)>) -> Vec<String> {
 
     let mut replaces:Vec<String> = vec![];
@@ -307,7 +320,7 @@ mod replace_tests {
 }
 
 
-fn edits1(words: &Vec<String>) -> Vec<String> {
+fn edits1(word: &str) -> Vec<String> {
 
     let mut edits1_words: Vec<(String, String)> = vec![];
 
@@ -315,9 +328,9 @@ fn edits1(words: &Vec<String>) -> Vec<String> {
 
     // gets all the splitted words
     let mut splits: Vec<(String, String)> = vec![];
-    for w in words {
-         splits.append(&mut split(w));
-    }
+    //for w in words {
+    splits.append(&mut split(word));
+    //}
 
     let mut possibles: Vec<String> = vec![];
 
@@ -433,79 +446,51 @@ mod correction_tests {
 
 
 
+fn best_word(possible_words: &Vec<String>,
+                trained_words: &HashMap<String, usize>) -> String {
+    //! Given a vector of possible words, return the word that has the highest
+    //! probability based on the training set. Return "-" if no possible words
+    //! are found in the training set.
 
+    let mut best_word = String::from("-");
+    let mut max = 0;
 
+    for p_word in possible_words {
+        match (*trained_words).get(p_word) {
+            Some(freq) => {
+                if *freq > max {
+                    max = *freq;
+                    best_word = p_word.to_owned();
+                }
+            },
+            _ => continue,
+        }
+    }
+    best_word
+}
 
+#[cfg(test)]
+mod best_word_tests {
+    use super::best_word;
+    use std::collections::HashMap;
 
+    #[test]
+    fn returns_highest() {
+        let poss = vec!["test".to_owned(), "fest".to_owned(), "rest".to_owned()];
+        let mut trained = HashMap::new();
+        trained.insert("fest".to_owned(), 2);
+        trained.insert("test".to_owned(), 5);
+        trained.insert("rest".to_owned(), 3);
+        assert_eq!("test", best_word(&poss, &trained));
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// fn word_probability(possible_words: &Vec<String>,
-//                 trained_words: &HashMap<String, i64>) -> String {
-//     //! Given a vector of possible words, return the word that has the highest
-//     //! probability based on the training set. Return "-" if no possible words
-//     //! are found in the training set.
-//
-//     let mut best_word = String::from("-");
-//     let mut max = 0;
-//
-//     'possible: for p_word in possible_words {
-//         'trained: for train in trained_words {
-//             let (ref word, freq) = *train;
-//
-//             if *p_word == *word && max < freq {
-//                 max = freq;
-//                 best_word = p_word.to_owned();
-//                 break 'trained;
-//             }
-//
-//         }
-//     }
-//
-//     best_word
-// }
-//
-// #[cfg(test)]
-// mod word_probability_tests {
-//     use super::word_probability;
-//
-//     #[test]
-//     fn returns_highest() {
-//         let poss = vec!["test".to_owned(), "fest".to_owned(), "rest".to_owned()];
-//         let trained = vec![("fest".to_owned(), 2), ("test".to_owned(), 5),
-//                             ("rest".to_owned(), 3)];
-//         assert_eq!("test", word_probability(&poss, &trained));
-//     }
-//
-//     #[test]
-//     fn word_not_found() {
-//         let poss = vec!["test".to_owned(), "fest".to_owned(), "rest".to_owned()];
-//         let trained = vec![("nest".to_owned(), 5), ("lest".to_owned(), 2),
-//                             ("jest".to_owned(), 3)];
-//         assert_eq!("-", word_probability(&poss, &trained));
-//     }
-//
-// }
+    #[test]
+    fn word_not_found() {
+        let poss = vec!["test".to_owned(), "fest".to_owned(), "rest".to_owned()];
+        let mut trained = HashMap::new();
+        trained.insert("nest".to_owned(), 5);
+        trained.insert("lest".to_owned(), 2);
+        trained.insert("jest".to_owned(), 3);
+        assert_eq!("-", best_word(&poss, &trained));
+    }
+}
