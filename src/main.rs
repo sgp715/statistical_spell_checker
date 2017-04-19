@@ -144,7 +144,7 @@ fn split(word: &str) -> Vec<(String, String)> {
     let mut splits: Vec<(String, String)> = vec![];
     let length = word.len();
 
-    for i in 1..length {
+    for i in 0..length+1 {
         splits.push((word[0..i].to_owned(), word[i..length].to_owned()));
     }
 
@@ -156,21 +156,6 @@ fn split(word: &str) -> Vec<(String, String)> {
 mod test_split {
     use super::split;
 
-    #[test]
-    fn blank_test() {
-
-        let word = "";
-
-        let expected: Vec<(String, String)> = vec![];
-        let actual = split(word);
-
-        // lengths should be equal
-        assert_eq!(actual.len(), expected.len());
-
-        // the elements should be equal
-        assert_eq!(actual, expected);
-
-    }
 
     #[test]
     fn simple_test() {
@@ -178,9 +163,11 @@ mod test_split {
         let word = "test";
 
         let mut expected: Vec<(String, String)> = vec![];
+        expected.push(("".to_string(), "test".to_string()));
         expected.push(("t".to_string(), "est".to_string()));
         expected.push(("te".to_string(), "st".to_string()));
         expected.push(("tes".to_string(), "t".to_string()));
+        expected.push(("test".to_string(), "".to_string()));
         let actual = split(word);
 
         assert_eq!(actual, expected);
@@ -360,16 +347,21 @@ fn insert(splits: &Vec<(String, String)>) -> Vec<String> {
 
             let mut new_word: String = left.to_string().clone();
             let mut first = true;
-            for c in right.chars() {
+            if right.len() > 0{
+                for c in right.chars() {
 
-                if first == true {
+                    if first == true {
 
-                    new_word += &l.to_string();
-                    first = false;
+                        new_word += &l.to_string();
+                        first = false;
+                    }
+
+                    new_word += &c.to_string();
+
                 }
-
-                new_word += &c.to_string();
-
+            }
+            else{
+                new_word += &l.to_string();
             }
 
             inserts.push(new_word);
@@ -411,7 +403,7 @@ fn transpose(splits: &Vec<(String, String)>) -> Vec<String> {
         let mut new_word: String = left.to_string().clone();
 
         if right.len() >= 2{
-            
+
             let mut first = true;
             let mut second = false;
             let mut new_right1: String = "".to_string();
