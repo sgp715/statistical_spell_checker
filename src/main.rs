@@ -30,20 +30,17 @@ fn main() {
     //println!("Model trained!");
     //println!("Enter words to be corrected (ctrl+C to quit):");
 
-    let mut lines = BufReader::new(stdin()).lines();
 
-    while let Some(Ok(line)) = lines.next() {
-        let split_line = line.split_whitespace();
+    let inputs = read_words(stdin());
 
-        for word in split_line {
-            let mut corrected = String::new();
-            let mut possibilities = vec![];
+    for word in inputs {
+        let mut corrected = String::new();
+        let mut possibilities = vec![];
 
-            possibilities = known(&edits1(word), &training_words);
-            corrected = best_word(&possibilities, &frequencies);
+        possibilities = known(&edits1(&word), &training_words);
+        corrected = best_word(&possibilities, &frequencies);
 
-            println!("{}, {}", word, corrected);
-        }
+        println!("{}, {}", word, corrected);
     }
 }
 
