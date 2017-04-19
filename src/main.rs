@@ -362,6 +362,95 @@ mod insert_tests {
 
 }
 
+fn transpose(splits: &Vec<(String, String)>) -> Vec<String> {
+
+    let mut transposes:Vec<String> = vec![];
+
+    for &(ref left, ref right) in splits {
+
+        let mut new_word: String = left.to_string().clone();
+
+        if right.len() >= 2{
+            /*for i in 0..right.chars().len()-1 {
+                if first == true {
+                    new_word += &right.chars()[1].to_string();
+                    first = false;
+                    second = true;
+                    continue
+                }
+                if second == true{
+                    new_word += &right.chars()[0].to_string();
+                    second = false;
+                    continue
+                }
+                new_word += &right.chars()[i].to_string();
+            }*/
+            let mut first = true;
+            let mut second = false;
+            let mut new_right1: String = "".to_string();
+            let mut new_right0: String = "".to_string();
+            let mut new_right_rest: String = "".to_string();
+            for c in right.chars(){
+                if first == true {
+                    new_right0 += &c.to_string();
+                    first = false;
+                    second = true;
+                    continue
+                }
+                if second == true{
+                    new_right1 += &c.to_string();
+                    second = false;
+                    continue
+                }
+                new_right_rest += &c.to_string();
+            }
+            new_word = new_word +&new_right1+&new_right0+&new_right_rest;
+            transposes.push(new_word);
+        }
+        else{
+            for c in right.chars(){
+                new_word += &c.to_string();
+            }
+            transposes.push(new_word);
+        }
+    }
+
+    transposes
+
+}
+
+#[cfg(test)]
+mod transposes_tests {
+
+    use super::transpose;
+
+    #[test]
+    fn transposes_single_test() {
+
+        let mut input: Vec<(String, String)> = vec![];
+        input.push(("te".to_string(), "st".to_string()));
+        let actual: Vec<String> = transpose(&input);
+        let mut expected: Vec<String> = vec![];
+        expected.push("tets".to_string());
+
+        assert_eq!(actual[0], expected[0]);
+
+    }
+    #[test]
+    fn transposes_empty_test() {
+
+        let mut input: Vec<(String, String)> = vec![];
+        input.push(("te".to_string(), "t".to_string()));
+        let actual: Vec<String> = transpose(&input);
+        let mut expected: Vec<String> = vec![];
+        expected.push("tet".to_string());
+
+        assert_eq!(actual[0], expected[0]);
+
+    }
+
+}
+
 
 
 fn edits1(word: &str) -> Vec<String> {
@@ -373,7 +462,7 @@ fn edits1(word: &str) -> Vec<String> {
     let mut possibles: Vec<String> = vec![];
 
     possibles.append(&mut delete(&splits));
-    // let mut transposes: Vec<String> = vec![];
+    possibles.append(&mut transpose(&splits));
     possibles.append(&mut replace(&splits));
     possibles.append(&mut insert(&splits));
 
