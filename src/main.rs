@@ -30,9 +30,8 @@ fn main() {
 
 
 fn read_words<R: Read>(reader: R) -> Vec<String> {
-    //! reads words from stdin and outputs a vector tuple containing the words
-    //! and their frequencies (sorted by frequency)
-    //! delimited by spaces
+    //! reads words from stdin and outputs a vector containing the words
+    //! from reader (delimited by whitespace)
 
     let mut words: Vec<String> = vec![];
 
@@ -208,7 +207,8 @@ mod delete_tests {
         assert_eq!(actual, expected);
 
     }
-
+    
+    #[test]
     fn delete_front_back() {
 
         let mut input: Vec<(String, String)> = vec![];
@@ -219,6 +219,7 @@ mod delete_tests {
 
     }
 
+    #[test]
     fn delete_multiple() {
 
         let mut input: Vec<(String, String)> = vec![];
@@ -256,8 +257,7 @@ fn edits1(words: &Vec<String>) -> Vec<(String, String)> {
     // let mut inserts: Vec<String> = vec![];
 
 
-    edits1_words
-
+    possibles
 }
 
 #[cfg(test)]
@@ -280,9 +280,15 @@ mod edits2_tests {
 }
 
 
-fn known(words: Vec<String>) -> Vec<String> {
+fn known(edits: &Vec<String>, trained_words: &Vec<String>) -> Vec<String> {
 
     let mut known_words: Vec<String> = vec![];
+
+    for e in edits {
+        if trained_words.contains(e) {
+            known_words.push((*e).to_owned());
+        }
+    }
 
     known_words
 
@@ -290,7 +296,37 @@ fn known(words: Vec<String>) -> Vec<String> {
 
 #[cfg(test)]
 mod known_tests {
+    use super::known;
 
+    #[test]
+    fn no_words_found() {
+        let mut edits = vec![];
+        let mut trained_words = vec![];
+        let mut expected: Vec<String>  = vec![];
+        edits.push("test".to_owned());
+        edits.push("tesst".to_owned());
+        edits.push("rest".to_owned());
+        edits.push("tet".to_owned());
+
+        assert_eq!(expected, known(&edits, &trained_words))
+    }
+
+    #[test]
+    fn filters_known() {
+        let mut edits = vec![];
+        let mut trained_words = vec![];
+        let mut expected = vec![];
+        edits.push("test".to_owned());
+        edits.push("tesst".to_owned());
+        edits.push("rest".to_owned());
+        edits.push("tet".to_owned());
+        trained_words.push("test".to_owned());
+        trained_words.push("rest".to_owned());
+        expected.push("test".to_owned());
+        expected.push("rest".to_owned());
+
+        assert_eq!(expected, known(&edits, &trained_words))
+    }
 }
 
 
