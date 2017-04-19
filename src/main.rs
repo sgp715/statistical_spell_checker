@@ -34,11 +34,9 @@ fn main() {
     let inputs = read_words(stdin());
 
     for word in inputs {
-        let mut corrected = String::new();
-        let mut possibilities = vec![];
 
-        possibilities = known(&edits1(&word), &training_words);
-        corrected = best_word(&possibilities, &frequencies);
+        let possibilities = known(&edits1(&word), &training_words);
+        let corrected = best_word(&possibilities, &frequencies);
 
         println!("{}, {}", word, corrected);
     }
@@ -68,45 +66,46 @@ fn read_words<R: Read>(reader: R) -> Vec<String> {
 
 #[cfg(test)]
 mod read_words_tests {
-
+    use std::io::Cursor;
     use super::read_words;
 
-    // fn assert_read(expected: HashMap<String, i64>, input: &str) {
-    //
-    //     let mock_read = Cursor::new(input);
-    //     let words = words_count(mock_read);
-    //     assert_eq!(expected.to_owned(), words);
-    //
-    // }
+    #[test]
+    fn reads() {
+        assert_read(&["hello".to_owned(), "world".to_owned()], "hello world");
+    }
 
+    #[test]
+    fn handles_whitespace() {
+        assert_read(&["hello".to_owned(), "world".to_owned()],
+                    "\thello\n \tworld\n");
+    }
+
+    fn assert_read(expected: &[String], input: &str) {
+        let mock_read = Cursor::new(input);
+        let words = read_words(mock_read);
+        assert_eq!(expected.to_owned(), words);
+    }
 }
 
 
 fn counter(words: &Vec<String>) -> HashMap<String, usize> {
-
     //! takes in a vector of words creates a hashmap with the frequencies
     //! of the words from the vector
 
     let mut frequencies: HashMap<String, usize> = HashMap::new();
-
     for w in words {
-
         // fixed this hopefully?
         let count: usize = *frequencies.entry(w.to_string()).or_insert(0);
         frequencies.insert(w.to_string(), count + 1);
-
     }
 
     frequencies
-
 }
 
 #[cfg(test)]
 mod counter_tests {
 
     use super::counter;
-    use std::io::Cursor;
-    use std::collections::HashMap;
 
     #[test]
     fn simple() {
@@ -143,7 +142,6 @@ fn split(word: &str) -> Vec<(String, String)> {
 
 #[cfg(test)]
 mod test_split {
-
     use super::split;
 
     #[test]
@@ -174,9 +172,7 @@ mod test_split {
         let actual = split(word);
 
         assert_eq!(actual, expected);
-
     }
-
 }
 
 
@@ -184,11 +180,11 @@ fn delete(splits: &Vec<(String, String)>) -> Vec<String> {
 
     let mut deletes:Vec<String> = vec![];
 
-    for &(ref L, ref R) in splits {
+    for &(ref left, ref right) in splits {
 
-        let mut new_word: String = L.to_string().clone();
+        let mut new_word: String = left.to_string().clone();
         let mut first = true;
-        for c in R.chars() {
+        for c in right.chars() {
 
             if first == true {
                 first = false;
@@ -199,7 +195,6 @@ fn delete(splits: &Vec<(String, String)>) -> Vec<String> {
         }
 
         deletes.push(new_word);
-
     }
 
     deletes
@@ -233,6 +228,8 @@ mod delete_tests {
         let mut expected: Vec<String> = vec![];
         expected.push("tes".to_string());
 
+        assert_eq!(actual, expected);
+
     }
 
     #[test]
@@ -249,7 +246,6 @@ mod delete_tests {
         assert_eq!(actual, expected);
 
     }
-
 }
 
 
@@ -258,13 +254,13 @@ fn replace(splits: &Vec<(String, String)>) -> Vec<String> {
     let mut replaces:Vec<String> = vec![];
     let letters = "abcdefghijklmnopqrstuvwxyz";
 
-    for &(ref L, ref R) in splits {
+    for &(ref left, ref right) in splits {
 
         for l in letters.chars() {
 
-            let mut new_word: String = L.to_string().clone();
+            let mut new_word: String = left.to_string().clone();
             let mut first = true;
-            for c in R.chars() {
+            for c in right.chars() {
 
                 if first == true {
 
@@ -305,35 +301,14 @@ mod replace_tests {
 
     }
 
-    // #[test]
-    // fn delete_multiple() {
-    //
-    //     let mut input: Vec<(String, String)> = vec![];
-    //     input.push(("te".to_string(), "at".to_string()));
-    //     input.push(("tes".to_string(), "a".to_string()));
-    //     let actual: Vec<String> = replace(&input);
-    //     let mut expected: Vec<String> = vec![];
-    //     expected.push("teat".to_string());
-    //     expected.push("tesa".to_string());
-    //
-    //     assert_eq!(actual[], expected);
-    //
-    // }
-
 }
 
 
 fn edits1(word: &str) -> Vec<String> {
 
-    let mut edits1_words: Vec<(String, String)> = vec![];
-
-    let letters = "abcdefghijklmnopqrstuvwxyz";
-
     // gets all the splitted words
     let mut splits: Vec<(String, String)> = vec![];
-    //for w in words {
     splits.append(&mut split(word));
-    //}
 
     let mut possibles: Vec<String> = vec![];
 
@@ -346,25 +321,13 @@ fn edits1(word: &str) -> Vec<String> {
     possibles
 }
 
-#[cfg(test)]
-mod edits1_tests {
-
-}
-
-
-fn edits2(words: &Vec<String>) -> Vec<String> {
+/*fn edits2(words: &Vec<String>) -> Vec<String> {
 
     let mut edits2_words: Vec<String> = vec![];
 
     edits2_words
 
-}
-
-#[cfg(test)]
-mod edits2_tests {
-
-}
-
+}*/
 
 fn known(edits: &Vec<String>, trained_words: &Vec<String>) -> Vec<String> {
     let mut known_words: Vec<String> = vec![];
@@ -386,8 +349,8 @@ mod known_tests {
     #[test]
     fn no_words_found() {
         let mut edits = vec![];
-        let mut trained_words = vec![];
-        let mut expected: Vec<String>  = vec![];
+        let trained_words = vec![];
+        let expected: Vec<String>  = vec![];
         edits.push("test".to_owned());
         edits.push("tesst".to_owned());
         edits.push("rest".to_owned());
@@ -413,36 +376,6 @@ mod known_tests {
         assert_eq!(expected, known(&edits, &trained_words))
     }
 }
-
-
-fn candidates(words: Vec<String>) -> Vec<String> {
-
-    let mut candidates_words: Vec<String> = vec![];
-
-    candidates_words
-
-}
-
-#[cfg(test)]
-mod candidates_tests {
-
-}
-
-
-fn correction(words: Vec<String>) -> Vec<String> {
-
-    let mut correction_words: Vec<String> = vec![];
-
-    correction_words
-
-}
-
-#[cfg(test)]
-mod correction_tests {
-
-}
-
-
 
 fn best_word(possible_words: &Vec<String>,
                 trained_words: &HashMap<String, usize>) -> String {
