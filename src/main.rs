@@ -1,11 +1,22 @@
+/**
+ * statistical_spell_checker
+ *
+ * This program is a statistical spelling correction program. This program
+ * reads words from stdin and offers spelling corrections based on words found
+ * in the training file. If no correction can be found, the program returns
+ * "-". The implementation of this program is based on the implementation found
+ * in http://norvig.com/spell-correct.html
+ *
+ * Usage: cargo run <training_file>
+ *
+ */
+
+
+
 use std::env;
 use std::io::{BufRead, BufReader, Read, stdin};
 use std::fs::File;
 use std::collections::HashMap;
-
-
-// going of the implementation in the link
-// http://norvig.com/spell-correct.html
 
 
 fn main() {
@@ -16,9 +27,8 @@ fn main() {
     let training_words = read_words(file);
     let frequencies = counter(&training_words);
 
-    // TODO: pass words into our model for training
-    println!("Model trained!");
-    println!("Enter words to be corrected (ctrl+C to quit):");
+    //println!("Model trained!");
+    //println!("Enter words to be corrected (ctrl+C to quit):");
 
     let mut lines = BufReader::new(stdin()).lines();
 
@@ -360,7 +370,6 @@ mod edits2_tests {
 
 
 fn known(edits: &Vec<String>, trained_words: &Vec<String>) -> Vec<String> {
-
     let mut known_words: Vec<String> = vec![];
 
     for e in edits {
@@ -435,10 +444,6 @@ fn correction(words: Vec<String>) -> Vec<String> {
 mod correction_tests {
 
 }
-
-
-
-
 
 
 
