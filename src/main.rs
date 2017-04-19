@@ -31,20 +31,26 @@ fn main() {
     //println!("Enter words to be corrected (ctrl+C to quit):");
 
 
-    let inputs = read_words(stdin());
+    let mut lines = BufReader::new(stdin()).lines();
 
-    for word in inputs {
-        // Add words that are 1 edit away
-        let mut possibilities = vec![];
-        let e1_poss = edits1(&word);
-        possibilities.append(&mut known(&e1_poss, &training_words));
+    while let Some(Ok(word)) = lines.next() {
+        let split_line = word.split_whitespace();
 
-        // Add words that are 2 edits away
-        let e2_poss = edits2(&e1_poss);
-        possibilities.append(&mut known(&e2_poss, &training_words));
-        let corrected = best_word(&possibilities, &frequencies);
+        for word in split_line {
+            let cleaned = clean_word(word); // remove special characters
 
-        println!("{}, {}", word, corrected);
+            // Add words that are 1 edit away
+            let mut possibilities = vec![];
+            let e1_poss = edits1(&cleaned);
+            possibilities.append(&mut known(&e1_poss, &training_words));
+
+            // Add words that are 2 edits away
+            let e2_poss = edits2(&e1_poss);
+            possibilities.append(&mut known(&e2_poss, &training_words));
+            let corrected = best_word(&possibilities, &frequencies);
+
+            println!("{}, {}", cleaned, corrected);
+        }
     }
 }
 
@@ -181,6 +187,40 @@ mod test_split {
     }
 }
 
+/// Strips numbers and special characters from the beginning and end
+/// of the input string.
+fn clean_word(word: &str) -> &str {
+    word.trim_matches(|c: char| c == ',' || c == '.' || c == '!'
+                      || c == '?' || c == '\'' || c == '\"'
+                      || c == '(' || c == ')'  || c == '-'
+                      || c == ':' || c == ';')
+}
+
+#[cfg(test)]
+mod clean_word_tests {
+    use super::clean_word;
+
+    #[test]
+    fn test_period() {
+        let expected = "word";
+        let output = clean_word("word.");
+        assert_eq!(expected, output);
+    }
+
+    #[test]
+    fn test_single_quotes() {
+        let expected = "word";
+        let output = clean_word("\'word\'");
+        assert_eq!(expected, output);
+    }
+
+    #[test]
+    fn test_double_quotes() {
+        let expected = "word";
+        let output = clean_word("\"word\"");
+        assert_eq!(expected, output);
+    }
+}
 
 fn delete(splits: &Vec<(String, String)>) -> Vec<String> {
 
@@ -371,20 +411,7 @@ fn transpose(splits: &Vec<(String, String)>) -> Vec<String> {
         let mut new_word: String = left.to_string().clone();
 
         if right.len() >= 2{
-            /*for i in 0..right.chars().len()-1 {
-                if first == true {
-                    new_word += &right.chars()[1].to_string();
-                    first = false;
-                    second = true;
-                    continue
-                }
-                if second == true{
-                    new_word += &right.chars()[0].to_string();
-                    second = false;
-                    continue
-                }
-                new_word += &right.chars()[i].to_string();
-            }*/
+            
             let mut first = true;
             let mut second = false;
             let mut new_right1: String = "".to_string();
