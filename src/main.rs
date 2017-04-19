@@ -19,13 +19,11 @@ fn main() {
     // TODO: pass words into our model for training
     println!("Model trained!");
     println!("Enter words to be corrected (ctrl+C to quit):");
-    loop {
 
-        let mut input = String::new();
-        // TODO: pass the word into trained model and correct if necessary
-        stdin().read_line(&mut input).expect("Could not read line!");
+    let mut lines = BufReader::new(stdin()).lines();
 
-        let split_line = input.split_whitespace();
+    while let Some(Ok(line)) = lines.next() {
+        let split_line = line.split_whitespace();
 
         for word in split_line {
             let mut corrected = String::new();
@@ -36,9 +34,7 @@ fn main() {
 
             println!("{}, {}", word, corrected);
         }
-
     }
-
 }
 
 
