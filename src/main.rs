@@ -37,9 +37,11 @@ fn main() {
         let split_line = word.split_whitespace();
 
         for word in split_line {
+            let cleaned = clean_word(word); // remove special characters
+
             // Add words that are 1 edit away
             let mut possibilities = vec![];
-            let e1_poss = edits1(&word);
+            let e1_poss = edits1(&cleaned);
             possibilities.append(&mut known(&e1_poss, &training_words));
 
             // Add words that are 2 edits away
@@ -47,7 +49,7 @@ fn main() {
             possibilities.append(&mut known(&e2_poss, &training_words));
             let corrected = best_word(&possibilities, &frequencies);
 
-            println!("{}, {}", word, corrected);
+            println!("{}, {}", cleaned, corrected);
         }
     }
 }
@@ -185,6 +187,40 @@ mod test_split {
     }
 }
 
+/// Strips numbers and special characters from the beginning and end
+/// of the input string.
+fn clean_word(word: &str) -> &str {
+    word.trim_matches(|c: char| c == ',' || c == '.' || c == '!' 
+                      || c == '?' || c == '\'' || c == '\"'
+                      || c == '(' || c == ')'  || c == '-' 
+                      || c == ':' || c == ';')
+}
+
+#[cfg(test)]
+mod clean_word_tests {
+    use super::clean_word;
+    
+    #[test]
+    fn test_period() {
+        let expected = "word";
+        let output = clean_word("word.");
+        assert_eq!(expected, output);
+    }   
+
+    #[test]
+    fn test_single_quotes() {
+        let expected = "word";
+        let output = clean_word("\'word\'");
+        assert_eq!(expected, output);
+    }   
+
+    #[test]
+    fn test_double_quotes() {
+        let expected = "word";
+        let output = clean_word("\"word\"");
+        assert_eq!(expected, output);
+    }
+}
 
 fn delete(splits: &Vec<(String, String)>) -> Vec<String> {
 
