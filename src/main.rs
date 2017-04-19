@@ -14,6 +14,7 @@ fn main() {
     let training_filename = env::args().nth(1).expect("Usage: cargo run <training_file>");
     let file = File::open(training_filename).expect("Could not read file");
     let training_words = read_words(file);
+    let frequencies = counter(&training_words);
 
     // TODO: pass words into our model for training
     println!("Model trained!");
@@ -24,17 +25,18 @@ fn main() {
         // TODO: pass the word into trained model and correct if necessary
         stdin().read_line(&mut input).expect("Could not read line!");
 
-        /*let split_line = input.split_whitespace();
+        let split_line = input.split_whitespace();
 
-        let mut corrected = String::new();
-        let mut possibilities = vec![];
         
         for word in split_line {
+            let mut corrected = String::new();
+            let mut possibilities = vec![];
+
             possibilities = known(&edits1(word), &training_words);
-            corrected = best_word(possibilities, training_words)
+            corrected = best_word(&possibilities, &frequencies);
 
             println!("{}, {}", word, corrected);
-        }*/
+        }
 
     }
 
