@@ -394,6 +394,7 @@ fn best_word(possible_words: &Vec<String>,
             },
             _ => continue,
         }
+    }
     best_word
 }
 
