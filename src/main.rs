@@ -309,6 +309,60 @@ mod replace_tests {
 
 }
 
+fn insert(splits: &Vec<(String, String)>) -> Vec<String> {
+
+    let mut inserts:Vec<String> = vec![];
+    let letters = "abcdefghijklmnopqrstuvwxyz";
+
+    for &(ref left, ref right) in splits {
+
+        for l in letters.chars() {
+
+            let mut new_word: String = left.to_string().clone();
+            let mut first = true;
+            for c in right.chars() {
+
+                if first == true {
+
+                    new_word += &l.to_string();
+                    first = false;
+                }
+
+                new_word += &c.to_string();
+
+            }
+
+            inserts.push(new_word);
+
+        }
+
+    }
+
+    inserts
+
+}
+
+#[cfg(test)]
+mod insert_tests {
+
+    use super::insert;
+
+    #[test]
+    fn insert_single_test() {
+
+        let mut input: Vec<(String, String)> = vec![];
+        input.push(("te".to_string(), "t".to_string()));
+        let actual: Vec<String> = insert(&input);
+        let mut expected: Vec<String> = vec![];
+        expected.push("teat".to_string());
+
+        assert_eq!(actual[0], expected[0]);
+
+    }
+
+}
+
+
 
 fn edits1(word: &str) -> Vec<String> {
 
@@ -321,7 +375,7 @@ fn edits1(word: &str) -> Vec<String> {
     possibles.append(&mut delete(&splits));
     // let mut transposes: Vec<String> = vec![];
     possibles.append(&mut replace(&splits));
-    // let mut inserts: Vec<String> = vec![];
+    possibles.append(&mut insert(&splits));
 
 
     possibles
