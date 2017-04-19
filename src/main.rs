@@ -148,7 +148,7 @@ mod test_split {
     }
 
     #[test]
-    fn simple() {
+    fn simple_test() {
 
         let word = "test";
 
@@ -157,6 +157,77 @@ mod test_split {
         expected.push(("te".to_string(), "st".to_string()));
         expected.push(("tes".to_string(), "t".to_string()));
         let actual = split(word);
+
+        assert_eq!(actual, expected);
+
+    }
+
+}
+
+
+fn delete(splits: &Vec<(String, String)>) -> Vec<String> {
+
+    let mut deletes:Vec<String> = vec![];
+
+    for &(ref L, ref R) in splits {
+
+        let mut new_word: String = L.to_string();
+        let mut first = true;
+        for c in R.chars() {
+
+            if first == true {
+                first = false;
+                continue
+            }
+
+            new_word += &c.to_string();
+        }
+
+        deletes.push(new_word);
+
+    }
+
+    deletes
+
+}
+
+#[cfg(test)]
+mod delete_tests {
+
+    use super::delete;
+
+    #[test]
+    fn delete_single_test() {
+
+        let mut input: Vec<(String, String)> = vec![];
+        input.push(("te".to_string(), "st".to_string()));
+        let actual: Vec<String> = delete(&input);
+        let mut expected: Vec<String> = vec![];
+        expected.push("tet".to_string());
+
+        assert_eq!(actual, expected);
+
+    }
+
+    fn delete_front_back() {
+
+        let mut input: Vec<(String, String)> = vec![];
+        input.push(("tes".to_string(), "t".to_string()));
+        let actual: Vec<String> = delete(&input);
+        let mut expected: Vec<String> = vec![];
+        expected.push("tes".to_string());
+
+    }
+
+    fn delete_multiple() {
+
+        let mut input: Vec<(String, String)> = vec![];
+        input.push(("te".to_string(), "st".to_string()));
+        input.push(("tes".to_string(), "t".to_string()));
+        let actual: Vec<String> = delete(&input);
+        let mut expected: Vec<String> = vec![];
+        expected.push("tet".to_string());
+        expected.push("tes".to_string());
 
         assert_eq!(actual, expected);
 
@@ -177,10 +248,12 @@ fn edits1(words: &Vec<String>) -> Vec<(String, String)> {
          splits.append(&mut split(w));
     }
 
-    let mut deletes: Vec<String> = vec![];
-    let mut transposes: Vec<String> = vec![];
-    let mut replaces: Vec<String> = vec![];
-    let mut inserts: Vec<String> = vec![];
+    let possibles: Vec<String> = vec![];
+
+    // possibles.append(&mut delete(&splits));
+    // let mut transposes: Vec<String> = vec![];
+    // let mut replaces: Vec<String> = vec![];
+    // let mut inserts: Vec<String> = vec![];
 
 
     edits1_words
